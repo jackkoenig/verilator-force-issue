@@ -2,7 +2,7 @@
 
 This is a reproducible test case for a probable bug in Verilator v5.024
 
-You can run the test with `make replay`.
+You can run the test with `make replay` (or just `make`).
 It will default to using the `verilator` on your `PATH`, but you can set the `VERILATOR` environment variable to point to a different `verilator` binary.
 
 Correct operation, e.g. using Verilator v5.022 results in the following output (and an exit value of `0`):

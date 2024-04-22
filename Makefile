@@ -3,7 +3,9 @@
 # To replay the simulation run `make replay` in this directory.
 # Changes to `generated-sources` and `primary-sources` will be picked up when running `make replay` and `make simulation`. This is useful for debugging issues. You can also freely add, remove or change any of the arguments to the backend or simulation in the targets below.
 
-.PHONY: clean simulation replay
+.PHONY: clean simulation replay default
+
+default: replay
 
 clean:
 	rm -rf verilated-sources simulation simulation-log.txt
