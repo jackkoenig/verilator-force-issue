@@ -1,5 +1,10 @@
 # Verilator Force Issue
 
+**Disclaimer**: Apologies that the C++ wrapping the Verilator simulation is a more complex than it needs to be.
+I believe the problem is understandable from just the Verilog so I figured I wouldn't bother minimizing that infrastructure any further.
+
+# Introduction
+
 This is a reproducible test case for a probable bug in Verilator v5.024
 
 You can run the test with `make replay` (or just `make`).
@@ -35,3 +40,23 @@ cycle =  2
 grep 'Verilog $finish' /Users/koenig/work/verilator-testcase-simple/simulation-log.txt
 make: *** [replay] Error 1
 ```
+
+## Diagnosis
+
+The issue is with forcing both a register and an output port driven by that register.
+The target code in question:
+```verilog
+module Top(
+  input         clock,
+  output [15:0] out
+);
+  reg [15:0] r;
+  always @(posedge clock)
+    r <= 16'h2A;
+  assign out = r;
+endmodule
+```
+
+When both `Top.r` and `Top.out` are driven, `r` does not correctly get the forced value.
+
+I bisected the issue to be introduced in commit https://github.com/verilator/verilator/commit/5e1fc6e24d9c2706d9871de9bec25cebf2a95ac7
