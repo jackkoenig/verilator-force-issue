@@ -11,17 +11,15 @@ module ProbeSpec(
     hasBeenResetReg = 1'bx;
   end
 
-  wire [15:0] value = {11'h0, cycle};
   always @(posedge clock) begin
     if (!reset & hasBeenResetReg === 1'h1) begin
-      $fwrite(32'h80000002, "cycle = %d\n", cycle);
+      $fwrite(32'h80000002, "[%d]: dut.r = 0x%h, dut.out = 0x%h\n", cycle, ProbeSpec.dut.r, ProbeSpec.dut.out);
       if (cycle > 5'd0) begin
-        force ProbeSpec.dut.r = value;
+        force ProbeSpec.dut.r = 16'hdead;
         // If you comment out the below line, the $fatal below does not occur
-        force ProbeSpec.dut.out = 16'h7B;
+        force ProbeSpec.dut.out = 16'hbeef;
       end
-      if (cycle > 5'd1 & ProbeSpec.dut.r != value) begin
-        $error("Assertion failed\n    at ProbeSpec.scala:652 chisel3.assert(read(dut.b.refs.reg) === cycle)\n");
+      if (cycle > 5'd1 & ProbeSpec.dut.r != 16'hdead) begin
         $fatal;
       end
       if (cycle > 5'd2)
